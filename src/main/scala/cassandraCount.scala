@@ -6,21 +6,19 @@ import com.typesafe.config.{Config, ConfigFactory}
 
 import scala.util.Try
 
-
+// all Jobserver jobs must implement the SparkJob trait
 object cassandraCount extends SparkJob {
-  def main(args: Array[String]) {
-    val config = ConfigFactory.parseString("")
-    val sc = new SparkContext()
-    val results = runJob(sc, config)
-  }
 
+  //validate method can be used to check that required information is supplied in the config, context is of the right type, etc
+  //to keep things simple, we will just return valid
   override def validate(sc: SparkContext, config: Config): SparkJobValidation = {
     SparkJobValid
   }
 
+  //runJob is where the actual work of the job goes
   override def runJob(sc: SparkContext, config: Config): Any = {
-    val rdd = sc.cassandraTable("system", "schema_keyspaces")
-    val num_row = rdd.count()
-    num_row
+    val rdd = sc.cassandraTable("system", "schema_keyspaces") //create an rdd from the system.schema_keyspaces table
+    val num_row = rdd.count() // count the number of rows in the rdd
+    num_row // return the result
   }
 }
